@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UACT_GASCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -49,6 +51,8 @@ AUACT_GASCharacter::AUACT_GASCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,6 +79,27 @@ void AUACT_GASCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &AUACT_GASCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &AUACT_GASCharacter::TouchStopped);
+}
+
+void AUACT_GASCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (nullptr != AbilitySystem)
+	{
+		if (HasAuthority() && OwnAbilities.Num() > 0)
+		{
+			for (auto i = 0; i < OwnAbilities.Num(); i++)
+			{
+				if (nullptr != OwnAbilities[i])
+				{
+					AbilitySystem->GiveAbility(FGameplayAbilitySpec(OwnAbilities[i].GetDefaultObject(), 1, 0));
+				}
+			}
+		}
+	}
+
+	AbilitySystem->InitAbilityActorInfo(this, this);
 }
 
 void AUACT_GASCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
