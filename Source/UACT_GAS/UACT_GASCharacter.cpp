@@ -55,6 +55,27 @@ AUACT_GASCharacter::AUACT_GASCharacter()
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
 }
 
+void AUACT_GASCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (nullptr != AbilitySystem)
+	{
+		if (HasAuthority() && OwnAbilities.Num() > 0)
+		{
+			for (auto i = 0; i < OwnAbilities.Num(); i++)
+			{
+				if (nullptr != OwnAbilities[i])
+				{
+					AbilitySystem->GiveAbility(FGameplayAbilitySpec(OwnAbilities[i].GetDefaultObject(), 1, 0));
+				}
+			}
+		}
+	}
+
+	AbilitySystem->InitAbilityActorInfo(this, this);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -79,27 +100,12 @@ void AUACT_GASCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &AUACT_GASCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &AUACT_GASCharacter::TouchStopped);
-}
 
-void AUACT_GASCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (nullptr != AbilitySystem)
-	{
-		if (HasAuthority() && OwnAbilities.Num() > 0)
-		{
-			for (auto i = 0; i < OwnAbilities.Num(); i++)
-			{
-				if (nullptr != OwnAbilities[i])
-				{
-					AbilitySystem->GiveAbility(FGameplayAbilitySpec(OwnAbilities[i].GetDefaultObject(), 1, 0));
-				}
-			}
-		}
-	}
-
-	AbilitySystem->InitAbilityActorInfo(this, this);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AUACT_GASCharacter::OnAttackPressed);
+	PlayerInputComponent->BindAction("Defense", IE_Pressed, this, &AUACT_GASCharacter::OnDefensePressed);
+	PlayerInputComponent->BindAction("Skill_F", IE_Pressed, this, &AUACT_GASCharacter::OnSkillFPressed);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AUACT_GASCharacter::OnRunPressed);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &AUACT_GASCharacter::OnRunReleased);
 }
 
 void AUACT_GASCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -151,4 +157,29 @@ void AUACT_GASCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AUACT_GASCharacter::OnAttackPressed()
+{
+	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnAttackPressed"));
+}
+
+void AUACT_GASCharacter::OnDefensePressed()
+{
+	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnDefensePressed"));
+}
+
+void AUACT_GASCharacter::OnSkillFPressed()
+{
+	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnSkillFPressed"));
+}
+
+void AUACT_GASCharacter::OnRunPressed()
+{
+	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnRunPressed"));
+}
+
+void AUACT_GASCharacter::OnRunReleased()
+{
+	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnRunReleased"));
 }
