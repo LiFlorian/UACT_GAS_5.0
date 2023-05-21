@@ -53,6 +53,8 @@ AUACT_GASCharacter::AUACT_GASCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+
+	AttributeSet = CreateDefaultSubobject<UACTPawnAttributeSet>(TEXT("AttributeSet"));
 }
 
 void AUACT_GASCharacter::BeginPlay()
@@ -162,24 +164,34 @@ void AUACT_GASCharacter::MoveRight(float Value)
 void AUACT_GASCharacter::OnAttackPressed()
 {
 	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnAttackPressed"));
+
+	K2_OnAttackPressed();
 }
 
 void AUACT_GASCharacter::OnDefensePressed()
 {
 	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnDefensePressed"));
+
+	K2_OnDefensePressed();
 }
 
 void AUACT_GASCharacter::OnSkillFPressed()
 {
 	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnSkillFPressed"));
+
+	K2_OnSkillFPressed();
 }
 
 void AUACT_GASCharacter::OnRunPressed()
 {
 	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnRunPressed"));
+
+	K2_OnRunPressed();
 }
 
 void AUACT_GASCharacter::OnRunReleased()
 {
 	UE_LOG(LogTemp, Display, TEXT("AUACT_GASCharacter::OnRunReleased"));
+
+	K2_OnRunReleased();
 }
